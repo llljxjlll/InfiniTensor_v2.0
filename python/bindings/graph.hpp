@@ -21,6 +21,8 @@ void bind_graph_builder(py::module &m) {
              py::arg("C"), py::arg("alpha") = 1.0, py::arg("beta") = 1.0,
              py::arg("transA") = false, py::arg("transB") = false,
              py::arg("Y") = py::none())
+        .def("clip", &GraphBuilderObj::clip, py::arg("X"), py::arg("min_val"),
+             py::arg("max_val"), py::arg("Y") = py::none())
         .def("add", &GraphBuilderObj::add, py::arg("A"), py::arg("B"),
              py::arg("Y") = py::none())
         .def("sub", &GraphBuilderObj::sub, py::arg("A"), py::arg("B"),
