@@ -29,6 +29,21 @@ void bind_graph_builder(py::module &m) {
              py::arg("Y") = py::none())
         .def("mul", &GraphBuilderObj::mul, py::arg("A"), py::arg("B"),
              py::arg("Y") = py::none())
+        .def("conv", &GraphBuilderObj::conv, py::arg("x"), py::arg("w"),
+             py::arg("b"), py::arg("pads"), py::arg("strides"),
+             py::arg("dilations"), py::arg("Y") = py::none())
+        .def("layernorm", &GraphBuilderObj::layernorm, py::arg("x"),
+             py::arg("weight"), py::arg("bias"), py::arg("eps") = 1e-5f,
+             py::arg("Y") = py::none())
+        .def("lpnorm", &GraphBuilderObj::lpnorm, py::arg("x"), py::arg("axis"),
+             py::arg("p") = 2, py::arg("eps") = 1e-12f,
+             py::arg("Y") = py::none())
+        .def("rmsnorm", &GraphBuilderObj::rmsnorm, py::arg("x"), py::arg("w"),
+             py::arg("epsilon") = 1e-6f, py::arg("Y") = py::none())
+        .def("softmax", &GraphBuilderObj::softmax, py::arg("x"),
+             py::arg("axis") = -1, py::arg("Y") = py::none())
+        .def("logsoftmax", &GraphBuilderObj::logsoftmax, py::arg("x"),
+             py::arg("Y") = py::none())
         .def("to_string", &GraphBuilderObj::printGraph)
         .def_property_readonly("graph", &GraphBuilderObj::getGraph);
 }
