@@ -23,6 +23,11 @@ struct OpType {
         MatMul,
         Relu,
         RmsNorm,
+        Sigmoid,
+        Silu,
+        Gelu,
+        Softplus,
+        Tanh,
         Softmax,
         Sub,
         Transpose,
@@ -58,6 +63,11 @@ struct OpType {
             CASE(LogSoftmax);
             CASE(LpNorm);
             CASE(RmsNorm);
+            CASE(Sigmoid);
+            CASE(Silu);
+            CASE(Gelu);
+            CASE(Softplus);
+            CASE(Tanh);
             CASE(Softmax);
 
         default:

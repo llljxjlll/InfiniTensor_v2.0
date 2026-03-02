@@ -147,6 +147,27 @@ Tensor GraphBuilderObj::logsoftmax(Tensor x, std::optional<Tensor> Y) {
     }
 }
 
+#define DEFINE_UNARY_OP(OP, TYPE)                                              \
+    Tensor GraphBuilderObj::OP(Tensor x, std::optional<Tensor> Y) {            \
+        if (Y.has_value()) {                                                    \
+            Tensor y_out = Y.value();                                           \
+            g->addOpWithOutputs<UnaryObj>(TYPE, std::move(x), y_out);          \
+            return y_out;                                                       \
+        } else {                                                                \
+            return g->addOp<UnaryObj>(TYPE, std::move(x), nullptr)             \
+                ->getOutput(0);                                                 \
+        }                                                                       \
+    }
+
+DEFINE_UNARY_OP(relu,     OpType::Relu);
+DEFINE_UNARY_OP(sigmoid,  OpType::Sigmoid);
+DEFINE_UNARY_OP(silu,     OpType::Silu);
+DEFINE_UNARY_OP(gelu,     OpType::Gelu);
+DEFINE_UNARY_OP(softplus, OpType::Softplus);
+DEFINE_UNARY_OP(tanh,     OpType::Tanh);
+
+#undef DEFINE_UNARY_OP
+
 string GraphBuilderObj::printGraph() const { return g->toString(); }
 
 Graph GraphBuilderObj::getGraph() const { return g; }

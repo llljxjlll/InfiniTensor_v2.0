@@ -161,3 +161,44 @@ def convert_lp_pool2d(translator, node):
     p    = int(node.args[1]) if len(node.args) > 1 else int(node.kwargs.get('norm_type', 2))
     axis = -1
     translator.tensors[node] = translator.builder.lpnorm(x, axis, p, 1e-12, None)
+
+
+# ---------------------------------------------------------------------------
+# Unary activation ops
+# ---------------------------------------------------------------------------
+
+@registry.register("relu", "default")
+def convert_relu(translator, node):
+    """Handle torch.relu / torch.nn.functional.relu."""
+    x = translator.tensors[node.args[0]]
+    translator.tensors[node] = translator.builder.relu(x, None)
+
+@registry.register("sigmoid", "default")
+def convert_sigmoid(translator, node):
+    """Handle torch.sigmoid / torch.nn.functional.sigmoid."""
+    x = translator.tensors[node.args[0]]
+    translator.tensors[node] = translator.builder.sigmoid(x, None)
+
+@registry.register("silu", "default")
+def convert_silu(translator, node):
+    """Handle torch.nn.functional.silu."""
+    x = translator.tensors[node.args[0]]
+    translator.tensors[node] = translator.builder.silu(x, None)
+
+@registry.register("gelu", "default")
+def convert_gelu(translator, node):
+    """Handle torch.nn.functional.gelu."""
+    x = translator.tensors[node.args[0]]
+    translator.tensors[node] = translator.builder.gelu(x, None)
+
+@registry.register("softplus", "default")
+def convert_softplus(translator, node):
+    """Handle torch.nn.functional.softplus."""
+    x = translator.tensors[node.args[0]]
+    translator.tensors[node] = translator.builder.softplus(x, None)
+
+@registry.register("tanh", "default")
+def convert_tanh(translator, node):
+    """Handle torch.tanh / torch.nn.functional.tanh."""
+    x = translator.tensors[node.args[0]]
+    translator.tensors[node] = translator.builder.tanh(x, None)

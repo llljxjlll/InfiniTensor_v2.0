@@ -44,6 +44,18 @@ void bind_graph_builder(py::module &m) {
              py::arg("axis") = -1, py::arg("Y") = py::none())
         .def("logsoftmax", &GraphBuilderObj::logsoftmax, py::arg("x"),
              py::arg("Y") = py::none())
+        .def("relu", &GraphBuilderObj::relu, py::arg("x"),
+             py::arg("Y") = py::none())
+        .def("sigmoid", &GraphBuilderObj::sigmoid, py::arg("x"),
+             py::arg("Y") = py::none())
+        .def("silu", &GraphBuilderObj::silu, py::arg("x"),
+             py::arg("Y") = py::none())
+        .def("gelu", &GraphBuilderObj::gelu, py::arg("x"),
+             py::arg("Y") = py::none())
+        .def("softplus", &GraphBuilderObj::softplus, py::arg("x"),
+             py::arg("Y") = py::none())
+        .def("tanh", &GraphBuilderObj::tanh, py::arg("x"),
+             py::arg("Y") = py::none())
         .def("to_string", &GraphBuilderObj::printGraph)
         .def_property_readonly("graph", &GraphBuilderObj::getGraph);
 }
