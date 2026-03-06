@@ -274,6 +274,14 @@ template void TensorObj::printDataImpl<uint16_t>(const Runtime &, size_t,
 template void TensorObj::printDataImpl<int32_t>(const Runtime &, size_t,
                                                 int) const;
 
+void TensorObj::freeDeviceData(const Runtime &runtime) {
+    IT_ASSERT(device != INFINI_DEVICE_CPU);
+    IT_ASSERT(data != nullptr);
+    runtime->deallocDevice(data->getPtr<void *>());
+    data = nullptr;
+    device = INFINI_DEVICE_CPU;
+}
+
 void TensorObj::copyToHost(const Runtime &runtime) {
     IT_ASSERT(data != nullptr && shape->isConcrete() && stride->isConcrete());
     IT_ASSERT(device != INFINI_DEVICE_CPU);

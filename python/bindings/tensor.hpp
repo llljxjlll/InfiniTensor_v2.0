@@ -95,10 +95,10 @@ void bind_tensor(py::module &m) {
              [](TensorObj &self, uintptr_t ptr, Runtime &runtime) {
                  if (!runtime->isCpu() &&
                      self.getDevice() != INFINI_DEVICE_CPU) {
-                     // Tensor already on device from a previous run: copy back
-                     // to host first, then update with new host pointer, then
-                     // re-copy to device.
-                     self.copyToHost(runtime);
+                     // Tensor already on device from a previous run: free old
+                     // device allocation (size may have changed via set_shape),
+                     // then copy fresh host data to device.
+                     self.freeDeviceData(runtime);
                      self.setData(reinterpret_cast<void *>(ptr));
                      self.copyToDevice(runtime);
                  } else {

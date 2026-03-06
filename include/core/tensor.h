@@ -53,6 +53,7 @@ class TensorObj : public Object {
     string toString() const override;
     // ============= TensorObj Data Operations==============
     void setData(void *data_);
+    void freeDeviceData(const Runtime &runtime);
     void dataMalloc(const Runtime &runtime);
 
     template <typename T> T getRawDataPtr() const {
