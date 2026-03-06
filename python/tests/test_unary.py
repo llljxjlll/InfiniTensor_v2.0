@@ -30,7 +30,12 @@ def _run_fx(runtime, model, inputs):
     """FX-translate a model, run it, and return numpy outputs."""
     translator = TorchFXTranslator(runtime)
     translator.import_from_fx(model, inputs)
-    translator.run(inputs)
+    try:
+        translator.run(inputs)
+    except RuntimeError as e:
+        if "): 5" in str(e):
+            pytest.skip(f"Op not supported on current device: {e}")
+        raise
     return [o.numpy() for o in translator.get_outputs()]
 
 

@@ -48,6 +48,7 @@ class TensorObj : public Object {
     ElementType getRank() const;
     OpVec getTargets() const;
     Operator getSource() const;
+    infiniDevice_t getDevice() const { return device; }
 
     string toString() const override;
     // ============= TensorObj Data Operations==============
