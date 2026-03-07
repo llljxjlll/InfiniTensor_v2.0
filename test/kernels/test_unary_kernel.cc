@@ -80,8 +80,14 @@ void runMultiThreadUnaryTest(OpType opType, infiniDevice_t targetDevice,
         numElems *= d;
 
     // Use small values in [-2, 2] for numerically stable activations
-    auto xData =
-        generateRandomData<T>(numElems, static_cast<T>(-2), static_cast<T>(2));
+    std::vector<T> xData;
+    if constexpr (std::is_same_v<T, uint16_t>) {
+        auto xF = generateRandomData<float>(numElems, -2.0f, 2.0f);
+        xData.resize(numElems);
+        for (size_t i = 0; i < numElems; ++i) xData[i] = fp32_to_fp16(xF[i]);
+    } else {
+        xData = generateRandomData<T>(numElems, static_cast<T>(-2), static_cast<T>(2));
+    }
 
     UnaryThreadParams<T> cpuParams, devParams;
 

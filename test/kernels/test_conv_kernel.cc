@@ -57,8 +57,18 @@ void runMultiThreadConvTest(infiniDevice_t targetDevice, int targetId,
     Shape shapeW = {1, 1, 2, 2};
     size_t numX = 16, numW = 4;
 
-    auto xData = generateRandomData<T>(numX, static_cast<T>(-1), static_cast<T>(1));
-    auto wData = generateRandomData<T>(numW, static_cast<T>(-1), static_cast<T>(1));
+    std::vector<T> xData, wData;
+    if constexpr (std::is_same_v<T, uint16_t>) {
+        auto xF = generateRandomData<float>(numX, -1.0f, 1.0f);
+        auto wF = generateRandomData<float>(numW, -1.0f, 1.0f);
+        xData.resize(numX);
+        wData.resize(numW);
+        for (size_t i = 0; i < numX; ++i) xData[i] = fp32_to_fp16(xF[i]);
+        for (size_t i = 0; i < numW; ++i) wData[i] = fp32_to_fp16(wF[i]);
+    } else {
+        xData = generateRandomData<T>(numX, static_cast<T>(-1), static_cast<T>(1));
+        wData = generateRandomData<T>(numW, static_cast<T>(-1), static_cast<T>(1));
+    }
 
     ConvThreadParams<T> cpuParams, devParams;
     for (auto *p : {&cpuParams, &devParams}) {
