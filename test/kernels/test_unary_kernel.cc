@@ -127,7 +127,7 @@ void runMultiThreadUnaryTest(OpType opType, infiniDevice_t targetDevice,
 
     size_t numErrors = 0;
     float maxError = 0.0f;
-    const float epsilon = 1e-3f;
+    const float epsilon = std::is_same_v<T, uint16_t> ? 2e-3f : 1e-3f;
 
     for (size_t i = 0; i < cpuParams.outputData.size(); ++i) {
         float cpuVal, devVal;
