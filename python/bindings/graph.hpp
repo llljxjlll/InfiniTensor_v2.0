@@ -43,7 +43,7 @@ void bind_graph_builder(py::module &m) {
         .def("softmax", &GraphBuilderObj::softmax, py::arg("x"),
              py::arg("axis") = -1, py::arg("Y") = py::none())
         .def("logsoftmax", &GraphBuilderObj::logsoftmax, py::arg("x"),
-             py::arg("Y") = py::none())
+             py::arg("axis") = -1, py::arg("Y") = py::none())
         .def("relu", &GraphBuilderObj::relu, py::arg("x"),
              py::arg("Y") = py::none())
         .def("sigmoid", &GraphBuilderObj::sigmoid, py::arg("x"),

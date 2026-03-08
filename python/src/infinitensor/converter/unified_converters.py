@@ -146,8 +146,11 @@ def convert_softmax(translator, node):
 @registry.register("log_softmax", "int")
 def convert_log_softmax(translator, node):
     """Handle torch.nn.functional.log_softmax(x, dim=..., ...)."""
-    x = translator.tensors[node.args[0]]
-    translator.tensors[node] = translator.builder.logsoftmax(x, None)
+    x   = translator.tensors[node.args[0]]
+    dim = node.args[1] if len(node.args) > 1 else node.kwargs.get('dim', -1)
+    if dim is None:
+        dim = -1
+    translator.tensors[node] = translator.builder.logsoftmax(x, int(dim), None)
 
 
 # ---------------------------------------------------------------------------

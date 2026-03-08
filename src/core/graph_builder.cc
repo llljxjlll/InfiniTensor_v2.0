@@ -134,15 +134,16 @@ Tensor GraphBuilderObj::softmax(Tensor x, int axis, std::optional<Tensor> Y) {
     }
 }
 
-Tensor GraphBuilderObj::logsoftmax(Tensor x, std::optional<Tensor> Y) {
+Tensor GraphBuilderObj::logsoftmax(Tensor x, int axis,
+                                    std::optional<Tensor> Y) {
     if (Y.has_value()) {
         Tensor y_out = Y.value();
         g->addOpWithOutputs<SoftmaxObj>(OpType::LogSoftmax, std::move(x),
-                                        y_out, -1);
+                                        y_out, axis);
         return y_out;
     } else {
         return g->addOp<SoftmaxObj>(OpType::LogSoftmax, std::move(x), nullptr,
-                                     -1)
+                                     axis)
             ->getOutput(0);
     }
 }

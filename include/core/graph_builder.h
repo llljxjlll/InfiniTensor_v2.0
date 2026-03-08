@@ -46,7 +46,8 @@ class GraphBuilderObj {
                    std::optional<Tensor> Y = std::nullopt);
     Tensor softmax(Tensor x, int axis = -1,
                    std::optional<Tensor> Y = std::nullopt);
-    Tensor logsoftmax(Tensor x, std::optional<Tensor> Y = std::nullopt);
+    Tensor logsoftmax(Tensor x, int axis = -1,
+                      std::optional<Tensor> Y = std::nullopt);
 
     Tensor relu(Tensor x, std::optional<Tensor> Y = std::nullopt);
     Tensor sigmoid(Tensor x, std::optional<Tensor> Y = std::nullopt);
