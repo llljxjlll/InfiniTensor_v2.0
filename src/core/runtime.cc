@@ -37,7 +37,7 @@ void RuntimeObj::initThreadContext(infiniDevice_t device, int deviceId) {
     ctx->device = device;
     ctx->deviceId = deviceId;
     ctx->stream = stream;
-    ctx->workspaceSize = 1ll << 30; // 1GB
+    ctx->workspaceSize = 7ll << 30; // 7GB
     ctx->workspace = nullptr;
 
     // Update cache and global map
