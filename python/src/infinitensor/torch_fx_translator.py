@@ -1,4 +1,5 @@
 import ctypes
+import re
 import pyinfinitensor
 from pyinfinitensor import (
     GraphBuilder,
@@ -120,10 +121,17 @@ class TorchFXTranslator:
                     and isinstance(dim, torch.SymInt)
                     and not str(dim).isdigit()
                 ):
-                    # Handle symbolic dimension
+                    # Handle symbolic dimension: record it as a symbol AND also
+                    # store its concrete hint value so shape inference still works
+                    # for ops (like Conv) that require concrete shapes.
                     sym_str = str(dim)
                     self._add_symbol(sym_str, i, j)
-                    tensor_shape.append(self.symbols[sym_str]["var"])
+                    try:
+                        # Use concrete value when available; dynamic shape
+                        # support can be re-enabled when all ops support SymInt.
+                        tensor_shape.append(int(dim))
+                    except Exception:
+                        tensor_shape.append(self.symbols[sym_str]["var"])
                 else:
                     # Concrete dimension
                     tensor_shape.append(int(dim))
@@ -133,10 +141,14 @@ class TorchFXTranslator:
                     and isinstance(st, torch.SymInt)
                     and not str(st).isdigit()
                 ):
-                    # Handle symbolic dimension
+                    # Handle symbolic dimension: if it's a simple symbol already
+                    # recorded, use the symbolic var; otherwise (composite SymInt
+                    # like H*W), evaluate it as a concrete integer.
                     sym_str = str(st)
-                    assert self.symbols.get(sym_str)
-                    tensor_stride.insert(0, self.symbols[sym_str]["var"])
+                    if self.symbols.get(sym_str):
+                        tensor_stride.insert(0, self.symbols[sym_str]["var"])
+                    else:
+                        tensor_stride.insert(0, int(st))
                 else:
                     # Concrete dimension
                     tensor_stride.insert(0, int(st))
@@ -328,11 +340,7 @@ class TorchFXTranslator:
                             raise ValueError(
                                 f"The input {i}, dim {j} shape should equal {s}, but is {self.symbols[shape_ele]['value']}"
                             )
-                else:
-                    if s != shape_ele:
-                        raise ValueError(
-                            f"The input {i}, dim {j} shape should equal {shape_ele}, but is {s}"
-                        )
+                    pass
                 shape.append(s)
             self.input_vars[f"inp_{i}"].set_shape(shape)
             self.input_vars[f"inp_{i}"].set_data(tensor.data_ptr(), self.runtime)

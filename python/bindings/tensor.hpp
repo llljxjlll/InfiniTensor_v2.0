@@ -93,9 +93,19 @@ void bind_tensor(py::module &m) {
              })
         .def("set_data",
              [](TensorObj &self, uintptr_t ptr, Runtime &runtime) {
-                 self.setData(reinterpret_cast<void *>(ptr));
-                 if (!runtime->isCpu()) {
+                 if (!runtime->isCpu() &&
+                     self.getDevice() != INFINI_DEVICE_CPU) {
+                     // Tensor already on device from a previous run: free old
+                     // device allocation (size may have changed via set_shape),
+                     // then copy fresh host data to device.
+                     self.freeDeviceData(runtime);
+                     self.setData(reinterpret_cast<void *>(ptr));
                      self.copyToDevice(runtime);
+                 } else {
+                     self.setData(reinterpret_cast<void *>(ptr));
+                     if (!runtime->isCpu()) {
+                         self.copyToDevice(runtime);
+                     }
                  }
              })
         .def("set_shape",
